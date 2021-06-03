@@ -35,12 +35,14 @@ When doing a complex task, we break that task down into smaller steps. To help u
 
 //Get order from customer, fetch ingredients, start production, then serve.
 
+/*
 let stocks = {
     Fruits : ["strawberry", "grapes", "banana", "apple"],
     liquid : ["water", "ice"],
     holder : ["cone", "cup", "stick"],
     toppings : ["chocolate", "peanuts"],
 };
+*/
 
 
 
@@ -144,6 +146,7 @@ Rejected: This means that your customer didn't receive their order and left the 
 
 //let is_shop_open = true;
 //error handling - changed to 
+/*
 let is_shop_open = false;
 
 //Now, we're gonna make a promise to our customer, "We will serve you ice-cream"
@@ -182,7 +185,7 @@ Let me make it simpler: it's similar to giving instructions to someone. You tell
 
 The first task is our original promise.
 The rest of the tasks return our promise once one small bit of work is completed
-*/
+
 
 // step 1
 order(2000,()=>console.log(`${stocks.Fruits[0]} was selected`))
@@ -226,35 +229,228 @@ order(2000,()=>console.log(`${stocks.Fruits[0]} was selected`))
   console.log("Customer left")
 })
 
+
 //We need a way to handle errors when something goes wrong. But first, we need to understand the promise cycle:
 // To catch our errors, let's change our variable to false.
 //let is_shop_open = false;
 
-/* 
+/
 To handle this, we use the .catch handler. Just like .then, it also returns a promise, but only when our original promise is rejected.
 
 A small reminder here:
 
 .then works when a promise is resolved
 .catch works when a promise is rejected
-*/
 
-/*
+
+
 A couple things to note about this code:
 
 The 1st message is coming from the reject() part of our promise
 The 2nd message is coming from the .catch handler
-*/
 
-/*
+
+
 There's something called the finally handler which works regardless of whether our promise was resolved or rejected.
 
 For example: whether we serve no customers or 100 customers, our shop will close at the end of the day
-*/
+
 
 .finally(()=>{
   console.log("end of day")
 })
 
+
 // Now please welcome Async / Await
 //All you have to do is write the word async before any regular function and it becomes a promise.
+
+// Before async/await, to make a promise we wrote this:
+
+function order(){
+   return new Promise( (resolve, reject) =>{
+
+    // Write code here
+   } )
+}
+
+
+// Now using async/await, we write one like this:
+ async function order() {
+    // Write code here
+ }
+ 
+
+ // We use the try keyword to run our code while we use catch to catch our errors. It's the same concept we saw when we looked at promises.
+
+ /
+ Promises in JS -> resolve or reject
+We used resolve and reject in promises like this:
+
+function kitchen(){
+
+  return new Promise ((resolve, reject)=>{
+    if(true){
+       resolve("promise is fulfilled")
+    }
+
+    else{
+        reject("error caught here")
+    }
+  })
+}
+
+kitchen()  // run the code
+.then()    // next step
+.then()    // next step
+.catch()   // error caught here
+.finally() // end of the promise [optional]
+
+
+Async / Await in JS -> try, catch
+When we're using async/await, we use this format:
+
+
+//👇 Magical keyword
+async function kitchen(){
+
+   try{
+// Let's create a fake problem      
+      await abc;
+   }
+
+   catch(error){
+      console.log("abc does not exist", error)
+   }
+
+   finally{
+      console.log("Runs code anyways")
+   }
+}
+
+kitchen()  // run the code
+
+//The keyword await makes JavaScript wait until a promise settles and returns its result.
+
+//Let's create a small promise to ask which topping to use. The process takes three seconds.
+
+function toppings_choice (){
+  return new Promise((resolve,reject)=>{
+    setTimeout(()=>{
+
+      resolve( console.log("which topping would you love?") )
+
+    },3000)
+  })
+}
+
+//Now, let's create our kitchen function with the async keyword first.
+async function kitchen(){
+
+  console.log("A")
+  console.log("B")
+  console.log("C")
+  
+  await toppings_choice()
+  
+  console.log("D")
+  console.log("E")
+
+}
+
+// Trigger the function
+
+kitchen();
+console.log("doing the dishes")
+console.log("cleaning the tables")
+console.log("taking orders")
+
+//We are literally going outside our kitchen to ask our customer, "what is your topping choice?" In the mean time, other things still get done.
+
+//Once, we get their topping choice, we enter the kitchen and finish the job.
+
+//When using Async/ Await, you can also use the .then, .catch, and .finally  handlers as well which are a core part of promises.
+*/
+
+let stocks = {
+    Fruits : ["strawberry", "grapes", "banana", "apple"],
+    liquid : ["water", "ice"],
+    holder : ["cone", "cup", "stick"],
+    toppings : ["chocolate", "peanuts"],
+};
+
+let is_shop_open = true;
+
+function time(ms) {
+
+   return new Promise( (resolve, reject) => {
+
+      if(is_shop_open){
+         setTimeout(resolve,ms);
+      }
+
+      else{
+         reject(console.log("Shop is closed"))
+      }
+    });
+}
+
+async function kitchen(){
+   try{
+
+// time taken to perform this 1 task
+     await time(2000)
+     console.log(`${stocks.Fruits[0]} was selected`)
+   }
+
+   catch(error){
+     console.log("Customer left", error)
+   }
+
+  
+}
+
+async function kitchen(){
+    try{
+	await time(2000)
+	console.log(`${stocks.Fruits[0]} was selected`)
+
+	await time(0000)
+	console.log("production has started")
+
+	await time(2000)
+	console.log("fruit has been chopped")
+
+	await time(1000)
+	console.log(`${stocks.liquid[0]} and ${stocks.liquid[1]} added`)
+
+	await time(1000)
+	console.log("start the machine")
+
+	await time(2000)
+	console.log(`ice cream placed on ${stocks.holder[1]}`)
+
+	await time(3000)
+	console.log(`${stocks.toppings[0]} as toppings`)
+
+	await time(2000)
+	console.log("Serve Ice Cream")
+    }
+
+    catch(error){
+	 console.log("customer left")
+    }
+
+     finally{
+      console.log("Day ended, shop closed")
+    }
+}
+
+// Trigger
+kitchen();
+
+/*
+Congratulations for reading until the end! In this article you've learned:
+
+The difference between synchronous and asynchronous systems
+Mechanisms of asynchronous JavaScript using 3 techniques (callbacks, promises, and Async/ Await)
+*/
